@@ -17,6 +17,9 @@ const FormSchema = z.object({
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
 
+// Use Zod to update the expected types
+const UpdateInvoice = FormSchema.omit({ id: true, date: true });
+
 export async function createInvoice(formData: FormData) {
     const { customerId, amount, status } = CreateInvoice.parse({
       customerId: formData.get('customerId'),
@@ -38,16 +41,40 @@ export async function createInvoice(formData: FormData) {
 
 
 
-//   const rawFormData = {
-//     customerId: formData.get('customerId'),
-//     amount: formData.get('amount'),
-//     status: formData.get('status'),
-//   };
-  // Test it out:
-  // You'll notice that amount is of type string and not number.
-  //This is because input elements with type="number" actually return a string, not a number!
-//   console.log(rawFormData);
-//   console.log(typeof rawFormData.customerId);
-//   console.log(typeof rawFormData.amount);
-//   console.log(typeof rawFormData.status);
+        //   const rawFormData = {
+        //     customerId: formData.get('customerId'),
+        //     amount: formData.get('amount'),
+        //     status: formData.get('status'),
+        //   };
+          // Test it out:
+          // You'll notice that amount is of type string and not number.
+          //This is because input elements with type="number" actually return a string, not a number!
+        //   console.log(rawFormData);
+        //   console.log(typeof rawFormData.customerId);
+        //   console.log(typeof rawFormData.amount);
+        //   console.log(typeof rawFormData.status);
+}
+
+export async function updateInvoice(id: string, formData: FormData) {
+  const { customerId, amount, status } = UpdateInvoice.parse({
+    customerId: formData.get('customerId'),
+    amount: formData.get('amount'),
+    status: formData.get('status'),
+  });
+
+  const amountInCents = amount * 100;
+
+  await sql`
+    UPDATE invoices
+    SET customer_id = ${customerId}, amount = ${amountInCents}, status = ${status}
+    WHERE id = ${id}
+  `;
+
+  revalidatePath('/dashboard/invoices');
+  //redirect('/dashboard/invoices');  // get error
+}
+
+export async function deleteInvoice(id: string) {
+  await sql`DELETE FROM invoices WHERE id = ${id}`;
+  revalidatePath('/dashboard/invoices');
 }

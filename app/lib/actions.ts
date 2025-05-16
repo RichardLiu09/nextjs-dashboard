@@ -146,13 +146,13 @@ export async function authenticate(
 ) {
          const result = await signIn('credentials', formData);
 
-           if (result?.error === 'CredentialsSignin') {
-             return 'Invalid credentials.';
-           }
-
-           if (result?.error) {
-             return 'Something went wrong.';
-           }
+//            if (result?.error === 'CredentialsSignin') {
+//              return 'Invalid credentials.';
+//            }
+//
+//            if (result?.error) {
+//              return 'Something went wrong.';
+//            }
 
            return undefined;
 

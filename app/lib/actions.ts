@@ -144,12 +144,28 @@ export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
-      try {
-        await signIn('credentials', formData);
-      } catch (error: any) {
-         if (error?.message === 'Invalid credentials') {
-              return 'Invalid credentials.';
-         }
-         return 'Something went wrong.';
-      }
+         const result = await signIn('credentials', formData);
+
+           if (result?.error === 'CredentialsSignin') {
+             return 'Invalid credentials.';
+           }
+
+           if (result?.error) {
+             return 'Something went wrong.';
+           }
+
+           return undefined;
+
+        // ** Should NOT use try/catch for await signIn()
+        // ** from chatGPT "If you're seeing it in a thrown error, it's likely because you're catching the redirect. Simply remove the try/catch block if you're allowing login to redirect on success."
+        //       try {
+        //         await signIn('credentials', formData);
+        //       } catch (error: any) {
+        //          if (error?.message === 'Invalid credentials') {
+        //               return 'Invalid credentials.';
+        //          }
+        //
+        //          console.log('error in authenticate: ', error);
+        //          return 'Something went wrong.';
+        //       }
 }

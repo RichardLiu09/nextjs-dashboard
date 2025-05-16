@@ -144,32 +144,12 @@ export async function authenticate(
   prevState: string | undefined,
   formData: FormData,
 ) {
-    const result = await signIn('credentials', formData);
-
-    if (result?.error === 'CredentialsSignin') {
-        return 'Invalid credentials.';
-    }
-
-    if (result?.error) {
-        return 'Something went wrong.';
-    }
-
-    return undefined;
-
-    // ** Build error:
-    // Type error: Property 'type' does not exist on type 'AuthError'.
-
-    //   try {
-    //     await signIn('credentials', formData);
-    //   } catch (error) {
-    //     if (error instanceof AuthError) {
-    //       switch (error.type) {
-    //         case 'CredentialsSignin':
-    //           return 'Invalid credentials.';
-    //         default:
-    //           return 'Something went wrong.';
-    //       }
-    //     }
-    //     throw error;
-    //   }
+      try {
+        await signIn('credentials', formData);
+      } catch (error: any) {
+         if (error?.message === 'Invalid credentials') {
+              return 'Invalid credentials.';
+         }
+         return 'Something went wrong.';
+      }
 }
